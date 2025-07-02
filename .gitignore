@@ -1,0 +1,26 @@
+# Entorno virtual
+venv/
+.venv/
+
+# Modelos entrenados
+models/trained_models/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Archivos temporales
+*.log
+*.tmp
+*.temp
