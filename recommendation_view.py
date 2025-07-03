@@ -1,11 +1,12 @@
-from utils.data_loader import get_movies_data, load_dataset
+from utils.data_loader import get_movies_data, load_dataset, get_users_data
 from utils.recommender import load_trained_model, get_top_n_recommendations
 import streamlit as st
+import pandas as pd
 
 def show():
     """Función principal que muestra la vista de recomendaciones"""
-    # Configuración de página (esto podría moverse al app principal)
-    #st.set_page_config(layout="wide", page_title="Sistema de Recomendación")
+    # Configuración de página
+    st.title("🎬 Sistema de Recomendación")
     
     # Sidebar para controles
     with st.sidebar:
@@ -17,14 +18,27 @@ def show():
         )
         rigor = st.slider("Nivel de rigor (rating mínimo):", 1.0, 5.0, 3.5, 0.5)
     
-    # Vista principal
-    st.title(f"🎬 Recomendaciones con {model_type}")
-    
     # Cargar datos
     movies = get_movies_data(dataset)
-    user_id = st.number_input("ID de Usuario:", min_value=1, max_value=1000, value=1)
+    users_list = get_users_data(dataset)
+    
+    # Selección de usuario
+    selected_user = st.selectbox(
+        "Selecciona un usuario:", 
+        options=users_list,
+        index=None,
+        placeholder="Elige un usuario...",
+        key="user_select"
+    )
+    
+    # Extraer user_id cuando se selecciona un usuario
+    user_id = int(selected_user.split('-')[0]) if selected_user else None
     
     if st.button("Generar Recomendaciones"):
+        if not user_id:
+            st.warning("Por favor selecciona un usuario primero")
+            return
+            
         try:
             model = load_trained_model(model_type, dataset)
             recs = get_top_n_recommendations(model, user_id, movies, rating_threshold=rigor)
@@ -46,6 +60,5 @@ def show():
         except FileNotFoundError:
             st.error(f"⚠️ Modelo {model_type} no encontrado. Entrénalo primero.")
 
-# Para pruebas independientes (opcional)
 if __name__ == "__main__":
     show()

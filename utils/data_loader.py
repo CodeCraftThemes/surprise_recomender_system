@@ -25,3 +25,25 @@ def get_movies_data(dataset_name='ml-100k'):
 def load_dataset(dataset_name='ml-100k'):
     """Carga el dataset de ratings"""
     return Dataset.load_builtin(dataset_name)
+
+def get_users_data(dataset_name='ml-100k'):
+    """Carga y formatea los datos de usuarios"""
+    if dataset_name == 'ml-100k':
+        users_path = os.path.join('data', 'ml-100k', 'u.user')
+        users = pd.read_csv(
+            users_path,
+            sep='|',
+            encoding='latin-1',
+            header=None,
+            names=['user_id', 'age', 'gender', 'occupation', 'zip_code']
+        )
+        
+        users['user_info'] = users['user_id'].astype(str) + '-' + \
+                             users['age'].astype(str) + '-' + \
+                             users['gender'] + '-' + \
+                             users['occupation']
+        
+        return users['user_info'].tolist()  # Devuelve una lista de strings
+    
+    else:
+        raise ValueError(f"Dataset no soportado: {dataset_name}")
